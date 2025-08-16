@@ -17,7 +17,7 @@ body {
 
 /* Container */
 .container {
-  max-width: 1000px;
+  max-width: 2000px;
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.95);
   padding: 20px;
@@ -129,3 +129,4 @@ h1 {
     padding: 8px;
   }
 }
+
