@@ -76,29 +76,13 @@ let map;
 let markers = [];
 let currentCampusId = 2;
 
-function isMobile() {
-  return window.matchMedia("(max-width: 900px)").matches;
-}
-
-function toggleDrawer(forceOpen = null) {
-  const info = document.getElementById("info");
-  const willOpen = forceOpen === null ? !info.classList.contains("open") : forceOpen;
-  if (willOpen) info.classList.add("open");
-  else info.classList.remove("open");
-  setTimeout(() => map?.invalidateSize(false), 260);
-}
-
-function openDrawerForMobile() {
-  if (isMobile()) toggleDrawer(true);
-}
-
 function clearMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 }
 
 function initMap() {
-  // Wheel zoom completely disabled (buttons/pinch only)
+  // Disable scroll-wheel zoom (use +/– buttons or pinch)
   map = L.map("map", { scrollWheelZoom: false }).setView([32.808092, -83.732058], 15);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -107,7 +91,6 @@ function initMap() {
 
   showCampus(2);
 
-  if (isMobile()) toggleDrawer(false); // start collapsed on phones
   window.addEventListener("resize", () => map.invalidateSize(false));
 
   document.getElementById("search-btn").addEventListener("click", search);
@@ -175,29 +158,15 @@ function showCampus(campusId) {
 
   html += `</div>`;
   document.getElementById("results").innerHTML = html;
-
-  if (isMobile()) toggleDrawer(false); // show map first when switching campus
 }
 
 function zoomToBuilding(lat, lng) {
   map.setView([lat, lng], 18);
-  openDrawerForMobile();
 }
 
-function searchBuilding() {
-    const searchTerm = document.getElementById('search-input').value.toLowerCase();
-    const results = buildings.filter(building => 
-        building.name.toLowerCase().includes(searchTerm) ||
-        building.department.toLowerCase().includes(searchTerm)
-    );
-    
-    if (results.length > 0) {
-        displayBuildingInfo(results[0]);
-        highlightBuildingOnMap(results[0]);
-    } else {
-        document.getElementById('info-content').innerHTML = 
-            `<p>No buildings found matching "${searchTerm}".</p>`;
-    }
+function search() {
+  const q = (document.getElementById("search").value || "").trim().toLowerCase();
+  if (!q) return showCampus(currentCampusId);
 
   const campusMatches = campuses.filter(c => c.name.toLowerCase().includes(q));
   const buildingMatches = [];
@@ -209,8 +178,7 @@ function searchBuilding() {
   if (campusMatches.length === 0 && buildingMatches.length === 1) {
     const { campus, building } = buildingMatches[0];
     showCampus(campus.id);
-    setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
-    return openDrawerForMobile();
+    return setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
   }
 
   clearMarkers();
@@ -252,10 +220,6 @@ function searchBuilding() {
   html += `</div>`;
   document.getElementById("results").innerHTML = html;
   if (bounds.length) map.fitBounds(bounds);
-  openDrawerForMobile();
 }
 
 window.addEventListener("load", initMap);
-// Disable page scroll
-
-
