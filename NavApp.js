@@ -83,7 +83,7 @@ function clearMarkers() {
 
 function initMap() {
   // Disable scroll-wheel zoom (use +/– buttons or pinch)
-  map = L.map("map", { scrollWheelZoom: false }).setView([32.808092, -83.732058], 15);
+  map = L.map("map", { scrollWheelZoom: true }).setView([32.808092, -83.732058], 15);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"
@@ -223,3 +223,4 @@ function search() {
 }
 
 window.addEventListener("load", initMap);
+
