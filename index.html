@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- App styles -->
+  <!-- App CSS -->
   <link rel="stylesheet" href="NavApp.css" />
 </head>
 <body>
@@ -17,30 +17,25 @@
     <h1>Navigation</h1>
 
     <div class="search-box">
-      <input
-        type="text"
-        id="search"
-        placeholder="Search campuses or buildings..."
-        aria-label="Search"
-      />
-      <button onclick="search()" type="button">Search</button>
+      <input id="search" type="text" placeholder="Search campuses or buildings..." aria-label="Search" />
+      <button type="button" id="search-btn">Search</button>
     </div>
 
     <div class="map-container">
       <div id="map"></div>
 
-      <!-- Sticky panel on desktop, slide-up drawer on mobile -->
+      <!-- Simple panel (no drawer) -->
       <aside id="info">
-        <div class="drawer-grabber" onclick="toggleDrawer()">
-          <span class="grabber"></span>
-         
-        </div>
-
         <h2 class="panel-title">Campuses</h2>
         <div id="results"></div>
       </aside>
     </div>
   </div>
+
+  <script src="NavApp.js"></script>
+</body>
+</html>
+
 
   <script>
     /* ===== Data ===== */
