@@ -10,7 +10,7 @@ body {
   font-family: Arial, sans-serif;
   line-height: 1.5;
   color: #333;
-  background: url("https://www.mga.edu/news/2025/images/Primary2_FulClr.jpg") center/cover fixed;
+  background: url("https://www.mga.edu/marketing-communications/images/logos/MiddleGeorgia_Inst_Vert_DkBgrnd.jpg") center/cover fixed;
   min-height: 100vh;
   padding: 20px;
 }
@@ -114,6 +114,7 @@ header {
     padding: 8px;
   }
 }
+
 
 
 
