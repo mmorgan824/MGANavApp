@@ -16,11 +16,13 @@
   <div class="container">
     <h1>Navigation</h1>
 
-    <div class="search-box">
+<div class="search-box">
   <input id="search" type="text" placeholder="Search campuses or buildings..." aria-label="Search" />
   <button type="button" id="search-btn" onclick="search()">Search</button>
   <button type="button" id="voice-btn" onclick="startListening()">🎤</button>
+  <button type="button" id="tts-btn" onclick="readAloud()">🔊</button>
 </div>
+
     <div class="map-container">
       <div id="map"></div>
 
@@ -326,7 +328,6 @@
     }
   </script>
 <script>
-  // Setup speech recognition
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   var recognition = new SpeechRecognition();
 
@@ -340,17 +341,25 @@
 
   recognition.onresult = function(event) {
     var transcript = event.results[0][0].transcript;
-    document.getElementById("search").value = transcript; // Fill existing search bar
+    document.getElementById("search").value = transcript; 
     console.log("You said:", transcript);
-    search(); // Run your existing search function
+    search(); 
   };
 
   function startListening() {
     recognition.start();
   }
+  
+  function readAloud() {
+    var text = document.getElementById("search").value;
+    if (!text) return;
+    var utterance = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
+  }
 </script>
 </body>
 </html>
+
 
 
 
