@@ -292,9 +292,6 @@
  <input type="text" id="myText" placeholder="Type something...">
   <button onclick="speakText()">Speak</button>
 
-  <!-- Your existing content continues here -->
-
-  <!-- TTS script at the bottom -->
   <script>
     function speakText() {
       const text = document.getElementById("myText").value || "Hello, this is text to speech!";
@@ -302,6 +299,33 @@
       window.speechSynthesis.speak(utterance);
     }
   </script>
+<input type="text" id="searchBox" placeholder="Say something..." size="40">
+  <button onclick="startListening()">🎤 Speak</button>
+
+  <script>
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var recognition = new SpeechRecognition();
+
+    recognition.onstart = function() {
+      console.log("Voice recognition started. Speak now.");
+    };
+
+    recognition.onspeechend = function() {
+      console.log("Stopped listening.");
+      recognition.stop();
+    };
+
+    recognition.onresult = function(event) {
+      var transcript = event.results[0][0].transcript;
+      document.getElementById("searchBox").value = transcript;
+      console.log("You said: " + transcript);
+    };
+
+    function startListening() {
+      recognition.start();
+    }
+  </script>
 </body>
 </html>
+
 
