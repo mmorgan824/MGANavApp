@@ -289,5 +289,19 @@
 
     window.onload = initMap;
   </script>
+ <input type="text" id="myText" placeholder="Type something...">
+  <button onclick="speakText()">Speak</button>
+
+  <!-- Your existing content continues here -->
+
+  <!-- TTS script at the bottom -->
+  <script>
+    function speakText() {
+      const text = document.getElementById("myText").value || "Hello, this is text to speech!";
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
+  </script>
 </body>
 </html>
+
