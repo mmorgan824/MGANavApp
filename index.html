@@ -17,10 +17,10 @@
     <h1>Navigation</h1>
 
     <div class="search-box">
-      <input id="search" type="text" placeholder="Search campuses or buildings..." aria-label="Search" />
-      <button type="button" id="search-btn">Search</button>
-    </div>
-
+  <input id="search" type="text" placeholder="Search campuses or buildings..." aria-label="Search" />
+  <button type="button" id="search-btn" onclick="search()">Search</button>
+  <button type="button" id="voice-btn" onclick="startListening()">🎤</button>
+</div>
     <div class="map-container">
       <div id="map"></div>
 
@@ -325,7 +325,32 @@
       recognition.start();
     }
   </script>
+<script>
+  // Setup speech recognition
+  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var recognition = new SpeechRecognition();
+
+  recognition.onstart = function() {
+    console.log("Voice recognition started...");
+  };
+
+  recognition.onspeechend = function() {
+    recognition.stop();
+  };
+
+  recognition.onresult = function(event) {
+    var transcript = event.results[0][0].transcript;
+    document.getElementById("search").value = transcript; // Fill existing search bar
+    console.log("You said:", transcript);
+    search(); // Run your existing search function
+  };
+
+  function startListening() {
+    recognition.start();
+  }
+</script>
 </body>
 </html>
+
 
 
