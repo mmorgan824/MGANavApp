@@ -301,32 +301,6 @@
       window.speechSynthesis.speak(utterance);
     }
   </script>
-<input type="text" id="searchBox" placeholder="Say something..." size="40">
-  <button onclick="startListening()">🎤 Speak</button>
-
-  <script>
-    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    var recognition = new SpeechRecognition();
-
-    recognition.onstart = function() {
-      console.log("Voice recognition started. Speak now.");
-    };
-
-    recognition.onspeechend = function() {
-      console.log("Stopped listening.");
-      recognition.stop();
-    };
-
-    recognition.onresult = function(event) {
-      var transcript = event.results[0][0].transcript;
-      document.getElementById("searchBox").value = transcript;
-      console.log("You said: " + transcript);
-    };
-
-    function startListening() {
-      recognition.start();
-    }
-  </script>
 <script>
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   var recognition = new SpeechRecognition();
@@ -359,6 +333,7 @@
 </script>
 </body>
 </html>
+
 
 
 
