@@ -1,3 +1,4 @@
+
 /* ======= Data ======= */
 const campuses = [
   {
@@ -71,71 +72,286 @@ const campuses = [
   }
 ];
 
-/* ======= Map & UI ======= */
+/* ======= Map & UI State ======= */
 let map;
 let markers = [];
 let currentCampusId = 2;
 
-function clearMarkers() {
-  markers.forEach(m => map.removeLayer(m));
-  markers = [];
+// Tracking
+let isTracking = false;
+let followUser = true;
+let userMarker = null;
+let userAccuracyCircle = null;
+
+// Routing
+let destinationLatLng = null;
+let driveRouteLine = null; // OSRM (driving)
+let walkRouteLine = null;  // GraphHopper (walking) red dashed
+let distanceControl;
+let stepsControl;
+let lastRouteFetch = 0;
+let routeMode = "walk";    // "walk" | "drive"
+
+/* ======= Helpers ======= */
+const fmtDist = m => (m < 1000 ? `${Math.round(m)} m` : `${(m/1000).toFixed(2)} km`);
+const fmtMin  = s => Math.max(1, Math.round(s / 60));
+function formatBearing(a, b) {
+  const y = Math.sin((b.lng - a.lng) * Math.PI/180) * Math.cos(b.lat * Math.PI/180);
+  const x = Math.cos(a.lat * Math.PI/180)*Math.sin(b.lat * Math.PI/180) -
+            Math.sin(a.lat * Math.PI/180)*Math.cos(b.lat * Math.PI/180)*Math.cos((b.lng - a.lng)*Math.PI/180);
+  return Math.round((Math.atan2(y, x) * 180/Math.PI + 360) % 360);
+}
+function clearMarkers(){ markers.forEach(m => map.removeLayer(m)); markers = []; }
+function styleBtn(btn, color){
+  btn.style.background = color; btn.style.color = "#fff"; btn.style.border = `1px solid ${color}`;
+  btn.style.borderRadius = "8px"; btn.style.padding = "8px 10px"; btn.style.cursor = "pointer";
+  btn.style.boxShadow = "0 1px 3px rgba(0,0,0,.15)"; btn.style.font = "14px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif";
 }
 
+/* ======= Init ======= */
 function initMap() {
-  // Disable scroll-wheel zoom (use +/– buttons or pinch)
-  map = L.map("map", { scrollWheelZoom: true }).setView([32.808092, -83.732058], 15);
-
+  map = L.map("map", { scrollWheelZoom: false }).setView([32.808092, -83.732058], 15);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"
   }).addTo(map);
 
+  addLocateControl();
+  addModeToggle();
+  addHudControls();
+
   showCampus(2);
 
   window.addEventListener("resize", () => map.invalidateSize(false));
-
   document.getElementById("search-btn").addEventListener("click", search);
-  document.getElementById("search").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") search();
-  });
+  document.getElementById("search").addEventListener("keydown", e => { if (e.key === "Enter") search(); });
 }
 
-function showAllCampuses() {
+/* ======= Controls ======= */
+function addLocateControl() {
+  const Locate = L.Control.extend({
+    onAdd: function () {
+      const btn = L.DomUtil.create("button", "locate-btn");
+      btn.type = "button"; btn.title = "Follow My Location"; btn.innerHTML = "📍 Follow Me";
+      styleBtn(btn, "#0b3a6e");
+      btn.onclick = () => {
+        if (!isTracking) { startTracking(); btn.innerHTML = "🛑 Stop Follow"; styleBtn(btn, "#b91c1c"); }
+        else { stopTracking(); btn.innerHTML = "📍 Follow Me"; styleBtn(btn, "#0b3a6e"); }
+      };
+      return btn;
+    }
+  });
+  new Locate({ position: "topleft" }).addTo(map);
+}
+function addModeToggle() {
+  const Mode = L.Control.extend({
+    onAdd: function () {
+      const wrap = L.DomUtil.create("div", "mode-toggle");
+      wrap.style.display = "flex"; wrap.style.gap = "6px"; wrap.style.marginTop = "8px";
+      wrap.innerHTML = `
+        <button type="button" class="mode-btn active" data-mode="walk">🚶 Walk</button>
+        <button type="button" class="mode-btn" data-mode="drive">🚗 Drive</button>`;
+      wrap.querySelectorAll(".mode-btn").forEach(btn => {
+        styleBtn(btn, "#475569");
+        btn.onclick = () => {
+          wrap.querySelectorAll(".mode-btn").forEach(b => { b.classList.remove("active"); styleBtn(b, "#475569"); });
+          btn.classList.add("active");
+          routeMode = btn.dataset.mode;
+          styleBtn(btn, routeMode === "walk" ? "#ef4444" : "#0b3a6e");
+          recomputeRoute();
+        };
+      });
+      return wrap;
+    }
+  });
+  new Mode({ position: "topleft" }).addTo(map);
+}
+function addHudControls() {
+  distanceControl = L.control({ position: "bottomleft" });
+  distanceControl.onAdd = function () {
+    const div = L.DomUtil.create("div", "distance-info");
+    Object.assign(div.style, {
+      background: "rgba(255,255,255,.9)", border: "1px solid #e5e7eb",
+      borderRadius: "8px", padding: "8px 10px", font: "14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif"
+    });
+    div.innerHTML = "<b>Directions</b><br><span>No destination selected.</span>";
+    return div;
+  };
+  distanceControl.addTo(map);
+
+  stepsControl = L.control({ position: "bottomright" });
+  stepsControl.onAdd = function () {
+    const div = L.DomUtil.create("div", "steps-box");
+    div.innerHTML = "<b>Directions</b><br><em>No route yet.</em>";
+    return div;
+  };
+  stepsControl.addTo(map);
+}
+
+/* ======= Tracking ======= */
+function startTracking(){
+  if (isTracking) return;
+  isTracking = true; followUser = true;
+  map.locate({ watch:true, setView:false, enableHighAccuracy:true, maximumAge:5000 });
+  map.on("locationfound", onLocationFound);
+  map.on("locationerror", onLocationError);
+}
+function stopTracking(){
+  isTracking = false; followUser = false;
+  map.stopLocate();
+  map.off("locationfound", onLocationFound);
+  map.off("locationerror", onLocationError);
+  if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
+  if (userAccuracyCircle) { map.removeLayer(userAccuracyCircle); userAccuracyCircle = null; }
+  clearRoutes(); updateHUD(); updateSteps(null);
+}
+function onLocationFound(e){
+  const { latlng, accuracy } = e;
+  if (!userMarker) userMarker = L.marker(latlng, { icon: L.divIcon({ className:"user-icon", html:"🧭", iconSize:[28,28] }) }).addTo(map);
+  else userMarker.setLatLng(latlng);
+  if (!userAccuracyCircle) userAccuracyCircle = L.circle(latlng, { radius: accuracy, color:"#3b82f6", fillColor:"#93c5fd", fillOpacity:.25 }).addTo(map);
+  else { userAccuracyCircle.setLatLng(latlng); userAccuracyCircle.setRadius(accuracy); }
+  if (followUser) map.setView(latlng, Math.max(map.getZoom(), 17), { animate:false });
+
+  if (destinationLatLng) {
+    if (routeMode === "drive") {
+      if (Date.now() - lastRouteFetch > 5000) requestOSRM(latlng, destinationLatLng);
+    } else {
+      if (Date.now() - lastRouteFetch > 5000) requestGraphHopper(latlng, destinationLatLng);
+    }
+  }
+  updateHUD();
+}
+function onLocationError(err){ alert("Location error: " + (err.message || "Unable to get your location.")); stopTracking(); }
+
+/* ======= ROUTING ======= */
+/*** DRIVING: OSRM (public demo server) ***/
+async function osrmRoute(from, to){
+  const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson&steps=true`;
+  const res = await fetch(url); const data = await res.json();
+  if (!data || data.code !== "Ok" || !data.routes || !data.routes[0]) return null;
+  const r = data.routes[0];
+  const coords = r.geometry.coordinates.map(([lon,lat]) => [lat,lon]);
+  const steps = (r.legs?.[0]?.steps || []).map(s => {
+    const name = s.name || "road"; const dist = fmtDist(s.distance);
+    const t = s.maneuver?.type || "continue"; const mod = s.maneuver?.modifier || "";
+    const onto = name ? ` onto ${name}` : "";
+    switch (t) {
+      case "depart": return `Start${onto} • ${dist}`;
+      case "arrive": return `Arrive • ${dist}`;
+      case "turn": return `Turn ${mod}${onto} • ${dist}`.replace("  "," ");
+      case "roundabout": return `Enter roundabout${onto} • ${dist}`;
+      case "merge": return `Merge${onto} • ${dist}`;
+      case "fork": return `Keep ${mod}${onto} • ${dist}`.replace("  "," ");
+      default: return `Continue${onto} • ${dist}`;
+    }
+  });
+  return { coords, distance: r.distance, duration: r.duration, steps };
+}
+async function requestOSRM(from, to){
+  lastRouteFetch = Date.now();
+  const r = await osrmRoute(from, to);
+  if (!r) { updateSteps(null); const d = map.distance(from,to); updateHUD(d,null); return; }
+  if (!driveRouteLine) driveRouteLine = L.polyline(r.coords, { color:"#0b3a6e", weight:5, opacity:.95 }).addTo(map);
+  else driveRouteLine.setLatLngs(r.coords);
+  if (walkRouteLine) { map.removeLayer(walkRouteLine); walkRouteLine = null; }
+  updateHUD(r.distance, r.duration); updateSteps(r.steps);
+}
+
+/*** WALKING: GraphHopper (follows OSM footways/paths) ***/
+async function ghRoute(from, to){
+  if (!GRAPHOPPER_KEY || GRAPHOPPER_KEY === "REPLACE_WITH_YOUR_API_KEY") {
+    alert("Missing GraphHopper API key. Open NavApp.js and set GRAPHOPPER_KEY.");
+    return null;
+  }
+  const params = new URLSearchParams({
+    profile: "foot",  // 🚶
+    point: `${from.lat},${from.lng}`,
+    "point": `${to.lat},${to.lng}`,   // duplicate key is OK; URLSearchParams will keep last; we’ll build manually next line
+    points_encoded: "false",
+    instructions: "true",
+    locale: "en",
+    key: GRAPHOPPER_KEY
+  });
+  // manual: preserve both points
+  const url = `https://graphhopper.com/api/1/route?profile=foot&point=${from.lat},${from.lng}&point=${to.lat},${to.lng}&points_encoded=false&instructions=true&locale=en&key=${GRAPHOPPER_KEY}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!data || !data.paths || !data.paths[0]) return null;
+
+  const path = data.paths[0];
+  const coords = path.points.coordinates.map(([lon,lat]) => [lat,lon]);
+  const steps = (path.instructions || []).map(i => `${i.text} • ${fmtDist(i.distance)}`);
+  return { coords, distance: path.distance, duration: path.time/1000, steps };
+}
+async function requestGraphHopper(from, to){
+  lastRouteFetch = Date.now();
+  const r = await ghRoute(from, to);
+  if (!r) { updateSteps(null); const d = map.distance(from,to); updateHUD(d,null); return; }
+  if (!walkRouteLine) walkRouteLine = L.polyline(r.coords, { color:"#ef4444", weight:4, opacity:.95, dashArray:"8,8" }).addTo(map);
+  else walkRouteLine.setLatLngs(r.coords);
+  if (driveRouteLine) { map.removeLayer(driveRouteLine); driveRouteLine = null; }
+  updateHUD(r.distance, r.duration); updateSteps(r.steps);
+}
+
+/* ======= HUD & STEPS ======= */
+function updateHUD(routeDistance=null, routeDuration=null){
+  const box = document.querySelector(".distance-info"); if (!box) return;
+  if (!destinationLatLng){ box.innerHTML = "<b>Directions</b><br><span>No destination selected.</span>"; return; }
+
+  if (!userMarker){
+    box.innerHTML = `<b>${routeMode === "drive" ? "Driving" : "Walking"}</b><br><em>Tap 📍 Follow Me to start.</em>`;
+    return;
+  }
+
+  const from = userMarker.getLatLng(); const to = destinationLatLng;
+  const crow = fmtDist(map.distance(from, to));
+
+  if (routeDistance != null){
+    const eta = fmtMin(routeDuration);
+    box.innerHTML = `<b>${routeMode === "drive" ? "Driving route" : "Walking route"}</b><br>
+      Distance: <strong>${fmtDist(routeDistance)}</strong><br>
+      ETA: <strong>~${eta} min</strong><br>(Straight line: ${crow})`;
+  } else {
+    const brng = formatBearing(from, to);
+    box.innerHTML = `<b>${routeMode === "drive" ? "Driving" : "Walking"}</b><br>
+      Straight-line: <strong>${crow}</strong><br> Bearing: <strong>${brng}°</strong>`;
+  }
+}
+function updateSteps(steps){
+  const box = document.querySelector(".steps-box"); if (!box) return;
+  if (!destinationLatLng){ box.innerHTML = "<b>Directions</b><br><em>No route yet.</em>"; return; }
+  if (!userMarker){ box.innerHTML = `<b>${routeMode === "drive" ? "Driving" : "Walking"}</b><br><em>Tap 📍 Follow Me to get directions.</em>`; return; }
+  if (!steps || !steps.length){ box.innerHTML = `<b>${routeMode === "drive" ? "Driving" : "Walking"}</b><br><em>Routing unavailable.</em>`; return; }
+  box.innerHTML = `<b>${routeMode === "drive" ? "Driving" : "Walking"}</b><ol>${steps.map(s => `<li>${s}</li>`).join("")}</ol>`;
+}
+
+/* ======= UI ======= */
+function showAllCampuses(){
   clearMarkers();
   let html = "";
   campuses.forEach(c => {
-    const marker = L.marker([c.lat, c.lng])
-      .addTo(map)
+    const marker = L.marker([c.lat, c.lng]).addTo(map)
       .bindPopup(`<b>${c.name}</b><br>${c.address}`)
       .on("click", () => showCampus(c.id));
     markers.push(marker);
-
-    html += `
-      <div class="campus" onclick="showCampus(${c.id})">
-        <h3>${c.name}</h3>
-        <p class="muted">${c.address}</p>
-      </div>`;
+    html += `<div class="campus" onclick="showCampus(${c.id})"><h3>${c.name}</h3><p class="muted">${c.address}</p></div>`;
   });
   document.getElementById("results").innerHTML = html;
   map.fitBounds(markers.map(m => m.getLatLng()));
+  destinationLatLng = null; clearRoutes(); updateHUD(); updateSteps(null);
 }
+function showCampus(campusId){
+  currentCampusId = campusId; clearMarkers();
+  const campus = campuses.find(c => c.id === campusId); if (!campus) return;
 
-function showCampus(campusId) {
-  currentCampusId = campusId;
-  clearMarkers();
-  const campus = campuses.find(c => c.id === campusId);
-  if (!campus) return;
-
-  const campusMarker = L.marker([campus.lat, campus.lng])
-    .addTo(map)
+  const campusMarker = L.marker([campus.lat, campus.lng]).addTo(map)
     .bindPopup(`<b>${campus.name}</b><br>${campus.address}`);
   markers.push(campusMarker);
 
   campus.buildings.forEach(b => {
-    const marker = L.marker([b.lat, b.lng], {
-      icon: L.divIcon({ className: "building-icon", html: "🏛️", iconSize: [30, 30] })
-    })
-      .addTo(map)
-      .bindPopup(`<b>${b.name}</b><br>${b.desc || ""}`);
+    const marker = L.marker([b.lat, b.lng], { icon: L.divIcon({ className:"building-icon", html:"🏛️", iconSize:[30,30] }) })
+      .addTo(map).bindPopup(`<b>${b.name}</b><br>${b.desc || ""}`);
     markers.push(marker);
   });
 
@@ -147,80 +363,66 @@ function showCampus(campusId) {
     <p class="muted">${campus.address}</p>
     <h3>Buildings</h3>
     <div class="buildings-list">`;
-
   campus.buildings.forEach(b => {
-    html += `
-      <div class="building" onclick="zoomToBuilding(${b.lat}, ${b.lng})">
-        <h4>${b.name}</h4>
-        <p class="muted">${b.desc || ""}</p>
-      </div>`;
+    html += `<div class="building" onclick="zoomToBuilding(${b.lat}, ${b.lng})">
+      <h4>${b.name}</h4><p class="muted">${b.desc || ""}</p></div>`;
   });
-
   html += `</div>`;
   document.getElementById("results").innerHTML = html;
-}
 
-function zoomToBuilding(lat, lng) {
+  destinationLatLng = null; clearRoutes(); updateHUD(); updateSteps(null);
+}
+function zoomToBuilding(lat, lng){
   map.setView([lat, lng], 18);
+  destinationLatLng = L.latLng(lat, lng);
+  if (!userMarker){ clearRoutes(); updateSteps(null); const hud=document.querySelector(".distance-info"); if(hud) hud.innerHTML=`<b>${routeMode==="drive"?"Driving":"Walking"}</b><br><em>Tap 📍 Follow Me to start.</em>`; return;}
+  recomputeRoute();
 }
-
-function search() {
+function search(){
   const q = (document.getElementById("search").value || "").trim().toLowerCase();
   if (!q) return showCampus(currentCampusId);
 
   const campusMatches = campuses.filter(c => c.name.toLowerCase().includes(q));
   const buildingMatches = [];
-  campuses.forEach(c => c.buildings.forEach(b => {
-    if (b.name.toLowerCase().includes(q)) buildingMatches.push({ campus: c, building: b });
-  }));
+  campuses.forEach(c => c.buildings.forEach(b => { if (b.name.toLowerCase().includes(q)) buildingMatches.push({ campus: c, building: b }); }));
 
-  // Single building match → jump straight there
-  if (campusMatches.length === 0 && buildingMatches.length === 1) {
-    const { campus, building } = buildingMatches[0];
-    showCampus(campus.id);
+  if (!campusMatches.length && buildingMatches.length === 1){
+    const { campus, building } = buildingMatches[0]; showCampus(campus.id);
     return setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
   }
 
   clearMarkers();
   const bounds = [];
   let html = `<h3>Search Results</h3><div class="search-results">`;
-
-  if (campusMatches.length) {
+  if (campusMatches.length){
     html += `<h4>Campuses</h4>`;
-    campusMatches.forEach(c => {
-      bounds.push([c.lat, c.lng]);
-      html += `
-        <div class="result campus-result" onclick="showCampus(${c.id})">
-          <strong>${c.name}</strong><br><span class="muted">${c.address}</span>
-        </div>`;
-    });
+    campusMatches.forEach(c => { bounds.push([c.lat,c.lng]); html += `<div class="result campus-result" onclick="showCampus(${c.id})"><strong>${c.name}</strong><br><span class="muted">${c.address}</span></div>`; });
   }
-
-  if (buildingMatches.length) {
+  if (buildingMatches.length){
     html += `<h4>Buildings</h4>`;
     buildingMatches.forEach(({ campus, building }) => {
       bounds.push([building.lat, building.lng]);
       const click = `showCampus(${campus.id}); setTimeout(()=>zoomToBuilding(${building.lat}, ${building.lng}), 0);`;
-      html += `
-        <div class="result building-result" onclick='${click}'>
-          <strong>${building.name}</strong> <span class="muted">(${campus.name})</span><br>
-          <span class="muted">${building.desc || ""}</span>
-        </div>`;
-      const m = L.marker([building.lat, building.lng], {
-        icon: L.divIcon({ className: "building-icon", html: "🏛️", iconSize: [30, 30] })
-      }).addTo(map);
+      html += `<div class="result building-result" onclick='${click}'><strong>${building.name}</strong> <span class="muted">(${campus.name})</span><br><span class="muted">${building.desc || ""}</span></div>`;
+      const m = L.marker([building.lat, building.lng], { icon: L.divIcon({ className:"building-icon", html:"🏛️", iconSize:[30,30] }) }).addTo(map);
       markers.push(m);
     });
   }
-
-  if (!campusMatches.length && !buildingMatches.length) {
-    html += `<p class="muted">No matches found.</p>`;
-  }
-
+  if (!campusMatches.length && !buildingMatches.length) html += `<p class="muted">No matches found.</p>`;
   html += `</div>`;
   document.getElementById("results").innerHTML = html;
   if (bounds.length) map.fitBounds(bounds);
+
+  destinationLatLng = null; clearRoutes(); updateHUD(); updateSteps(null);
+}
+
+/* ======= Route helpers ======= */
+function clearRoutes(){ if (driveRouteLine){ map.removeLayer(driveRouteLine); driveRouteLine=null; } if (walkRouteLine){ map.removeLayer(walkRouteLine); walkRouteLine=null; } }
+function recomputeRoute(){
+  if (!destinationLatLng || !userMarker){ updateHUD(); updateSteps(null); return; }
+  const from = userMarker.getLatLng();
+  if (routeMode === "drive") requestOSRM(from, destinationLatLng);
+  else requestGraphHopper(from, destinationLatLng);
 }
 
 window.addEventListener("load", initMap);
-
