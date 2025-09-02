@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MGA Campus Map</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="new 3.css"/>
+
+  <!-- App logic -->
+  <script src="new 2.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <header class="app-header">
+      <h1>MGA Campus Navigation</h1>
+      <button class="drawer-toggle" type="button" onclick="toggleDrawer()"
+              aria-label="Toggle details panel">☰</button>
+    </header>
+
+    <div class="search-container">
+      <input id="search" type="text" placeholder="Search campuses or buildings..." />
+      <button id="search-button" type="button" onclick="search()">Search</button>
+    </div>
+
+    <div class="content">
+      <section id="map-container">
+        <div id="map" role="region" aria-label="Campus map"></div>
+      </section>
+
+      <!-- Slide-out / side drawer -->
+      <aside id="info" aria-live="polite">
+        <div class="info-header">
+          <h2 class="panel-title">Info</h2>
+          <button class="close-btn" type="button" onclick="toggleDrawer(false)" aria-label="Close panel">×</button>
+        </div>
+        <div id="results">
+          <!-- Filled by JS -->
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
