@@ -1,52 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<div>
+<head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>MGA Campus Navigation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MGA Campus Map</title>
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 
-  <!-- App CSS -->
-  <link rel="stylesheet" href="NavApp.css" />
-</div>
-<div>
+  <!-- App styles -->
+  <link rel="stylesheet" href="new 3.css"/>
+
+  <!-- App logic -->
+  <script src="new 2.js" defer></script>
+</head>
+<body>
   <div class="container">
-    <h1>Navigation</h1>
+    <header class="app-header">
+      <h1>MGA Campus Navigation</h1>
+      <button class="drawer-toggle" type="button" onclick="toggleDrawer()"
+              aria-label="Toggle details panel">☰</button>
+    </header>
 
-    <div class="search-box">
-      <input id="search" type="text" placeholder="Search campuses or buildings..." aria-label="Search" />
-      <button type="button" id="search-btn">Search</button>
-    </div>
-     <!-- Add voice controls -->
-    <div class="voice-controls">
-      <div class="voice-btn" id="speak-btn">
-        <i class="fas fa-volume-up"></i>
-        <span>Text to Speech</span>
-      </div>
-      <div class="voice-btn" id="listen-btn">
-        <i class="fas fa-microphone"></i>
-        <span>Speech to Text</span>
-      </div>
+    <div class="search-container">
+      <input id="search" type="text" placeholder="Search campuses or buildings..." />
+      <button id="search-button" type="button" onclick="search()">Search</button>
     </div>
 
-    <div class="map-container">
-      <div id="map"></div>
+    <div class="content">
+      <section id="map-container">
+        <div id="map" role="region" aria-label="Campus map"></div>
+      </section>
 
-      <!-- Simple info panel -->
-      <aside id="info">
-        <h2 class="panel-title">Campuses</h2>
-        <div id="results"></div>
+      <!-- Slide-out / side drawer -->
+      <aside id="info" aria-live="polite">
+        <div class="info-header">
+          <h2 class="panel-title">Info</h2>
+          <button class="close-btn" type="button" onclick="toggleDrawer(false)" aria-label="Close panel">×</button>
+        </div>
+        <div id="results">
+          <!-- Filled by JS -->
+        </div>
       </aside>
     </div>
   </div>
-
-  <!-- Only this script -->
-  <script src="NavApp.js"></script>
-</div>
+</body>
 </html>
+
 
 
 
