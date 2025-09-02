@@ -2,48 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>MGA Campus Navigation</title>
 
   <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha512-sA+e2H1K3pNn8k3V0Vx7l3v1m7p7G1fT3Qz2y1a3z3n8d8pG2k7WmJx1SScx8Vw1m6H4v39z9rAah2wC2xqQ=="
-        crossorigin="anonymous" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha512-vMNQYwH3oQFQqY7vQn9wXqk7x4V+QmJp+E2f0cQJrQ9+J7qGQ+Ht6qX2Y1mZ1JY9s7I8t6wP7yqgQeX2o5gG0A=="
-          crossorigin="anonymous" defer></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- App styles -->
-  <link rel="stylesheet" href="app.css"/>
-  <!-- App logic -->
-  <script src="app.js" defer></script>
+  <!-- App CSS -->
+  <link rel="stylesheet" href="NavApp.css" />
 </head>
 <body>
   <div class="container">
-    <header class="app-header">
-      <h1>MGA Campus Navigation</h1>
-      <button class="drawer-toggle" type="button" onclick="toggleDrawer()"
-              aria-label="Toggle details panel">☰</button>
-    </header>
+    <h1>Navigation</h1>
 
-    <div class="search-container">
-      <input id="search" type="text" placeholder="Search campuses or buildings..." />
-      <button id="search-button" type="button" onclick="search()">Search</button>
+    <div class="search-box">
+      <input id="search" type="text" placeholder="Search campuses or buildings..." aria-label="Search" />
+      <button type="button" id="search-btn">Search</button>
     </div>
 
-    <div class="content">
-      <section id="map-container">
-        <div id="map" role="region" aria-label="Campus map"></div>
-      </section>
+    <div class="map-container">
+      <div id="map"></div>
 
-      <aside id="info" aria-live="polite">
-        <div class="info-header">
-          <h2 class="panel-title">Info</h2>
-          <button class="close-btn" type="button" onclick="toggleDrawer(false)" aria-label="Close panel">×</button>
-        </div>
+      <!-- Simple info panel -->
+      <aside id="info">
+        <h2 class="panel-title">Campuses</h2>
         <div id="results"></div>
       </aside>
     </div>
   </div>
+
+  <!-- Only this script -->
+  <script src="NavApp.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
