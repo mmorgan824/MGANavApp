@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MGA Campus Map</title>
+  <title>MGA Campus Navigation</title>
 
   <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha512-sA+e2H1K3pNn8k3V0Vx7l3v1m7p7G1fT3Qz2y1a3z3n8d8pG2k7WmJx1SScx8Vw1m6H4v39z9rAah2wC2xqQ=="
+        crossorigin="anonymous" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha512-vMNQYwH3oQFQqY7vQn9wXqk7x4V+QmJp+E2f0cQJrQ9+J7qGQ+Ht6qX2Y1mZ1JY9s7I8t6wP7yqgQeX2o5gG0A=="
+          crossorigin="anonymous" defer></script>
 
   <!-- App styles -->
-  <link rel="stylesheet" href="new 3.css"/>
-
+  <link rel="stylesheet" href="app.css"/>
   <!-- App logic -->
-  <script src="new 2.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
 <body>
   <div class="container">
@@ -33,15 +36,12 @@
         <div id="map" role="region" aria-label="Campus map"></div>
       </section>
 
-      <!-- Slide-out / side drawer -->
       <aside id="info" aria-live="polite">
         <div class="info-header">
           <h2 class="panel-title">Info</h2>
           <button class="close-btn" type="button" onclick="toggleDrawer(false)" aria-label="Close panel">×</button>
         </div>
-        <div id="results">
-          <!-- Filled by JS -->
-        </div>
+        <div id="results"></div>
       </aside>
     </div>
   </div>
