@@ -1,154 +1,41 @@
-/* Reset */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Arial, sans-serif; line-height:1.5; color:#333;
+  background:#f4f6f8; min-height:100vh; padding:20px;
+}
+.container{max-width:1200px;margin:0 auto;background:#fff;padding:20px;border-radius:10px;border:1px solid #e6e8eb}
+.app-header{display:flex;align-items:center;justify-content:space-between;background:#2c3e50;color:#fff;padding:14px 16px;border-radius:8px;margin-bottom:16px}
+.drawer-toggle{display:none;background:transparent;border:none;font-size:22px;color:#fff;cursor:pointer}
 
-/* Base */
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.5;
-  color: #333;
-  background: url("https://www.mga.edu/news/2025/images/Primary2_FulClr.jpg") center/cover fixed;
-  min-height: 100vh;
-  padding: 20px;
-}
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 20px;
-  border-radius: 10px;
-}
+.search-container{display:flex;gap:8px;margin:16px 0}
+#search{flex:1;padding:10px;border:1px solid #ddd;border-radius:6px}
+#search-button{padding:10px 14px;background:#3498db;color:#fff;border:none;border-radius:6px;cursor:pointer}
+#search-button:hover{background:#2980b9}
 
-/* Header */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #2c3e50;
-  color: white;
-  padding: 14px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-.drawer-toggle {
-  display: none;
-  background: transparent;
-  border: none;
-  font-size: 22px;
-  color: #fff;
-  cursor: pointer;
-}
+.content{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+#map{height:520px;border-radius:8px;border:1px solid #ddd}
+#info{background:#fff;border:1px solid #ddd;border-radius:8px;max-height:520px;overflow:auto;padding:12px;position:relative}
+.info-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.close-btn{background:transparent;border:none;font-size:22px;cursor:pointer}
 
-/* Search */
-.search-container {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+.muted{color:#666;font-size:.92rem}
+.back-btn{background:#eee;border:1px solid #ddd;border-radius:6px;padding:6px 10px;cursor:pointer;margin-bottom:8px}
+.buildings-list .building,.search-results .result,.campus{
+  border:1px solid #eee;border-radius:8px;padding:10px;margin:8px 0;cursor:pointer
 }
-#search {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-#search-button {
-  padding: 10px 14px;
-  background: #3498db;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-#search-button:hover { background: #2980b9; }
+.buildings-list .building:hover,.search-results .result:hover,.campus:hover{background:#f7f9fb}
 
-/* Layout */
-.content {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 16px;
-}
-#map {
-  height: 520px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-#info {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  max-height: 520px;
-  overflow: auto;
-  padding: 12px;
-  position: relative;
-}
+.leaflet-div-icon.building-icon{display:grid;place-items:center;font-size:20px;border:none;background:transparent}
 
-/* Info panel */
-.info-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-.close-btn {
-  background: transparent;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-}
-
-/* Lists */
-.muted { color: #666; font-size: 0.92rem; }
-.back-btn {
-  background: #eee;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 6px 10px;
-  cursor: pointer;
-  margin-bottom: 8px;
-}
-.buildings-list .building,
-.search-results .result,
-.campus {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 8px 0;
-  cursor: pointer;
-}
-.buildings-list .building:hover,
-.search-results .result:hover,
-.campus:hover {
-  background: #f7f9fb;
-}
-
-/* Mobile drawer behavior */
-@media (max-width: 900px) {
-  .drawer-toggle { display: inline-block; }
-  .content {
-    display: block;
+/* Mobile drawer */
+@media (max-width:900px){
+  .drawer-toggle{display:inline-block}
+  .content{display:block}
+  #map{height:70vh}
+  #info{
+    position:fixed; inset:0 0 0 auto; width:min(90vw,420px);
+    transform:translateX(100%); transition:transform .26s ease;
+    z-index:1000; border-left:1px solid #ddd; border-radius:0;
   }
-  #map {
-    height: 70vh;
-  }
-  #info {
-    position: fixed;
-    inset: 0 0 0 auto;
-    width: min(90vw, 420px);
-    transform: translateX(100%);
-    transition: transform 0.26s ease;
-    z-index: 1000;
-    border-left: 1px solid #ddd;
-    border-radius: 0;
-  }
-  #info.open {
-    transform: translateX(0%);
-  }
-}
-
-/* Simple emoji marker sizing */
-.leaflet-div-icon.building-icon {
-  display: grid;
-  place-items: center;
-  font-size: 20px;
-  border: none;
-  background: transparent;
+  #info.open{transform:translateX(0)}
 }
