@@ -34,8 +34,7 @@ const campuses = [
       { name: "Memorial Hall", lat: 32.380955, lng: -83.346255, desc: "Math classrooms" }
     ]
   },
-  
-{
+  {
     id: 2,
     name: "Macon Campus",
     address: "100 University Parkway, Macon, GA 31206",
@@ -77,87 +76,68 @@ let map;
 let markers = [];
 let currentCampusId = 2;
 
-function isMobile() {
-  return window.matchMedia("(max-width: 900px)").matches;
-}
+function isMobile(){ return window.matchMedia("(max-width: 900px)").matches; }
 
 function initMap() {
   map = L.map("map", { scrollWheelZoom: true }).setView([32.808092, -83.732058], 15);
-
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"
   }).addTo(map);
 
   showCampus(2);
 
-  // On small screens, start with the drawer collapsed
   if (isMobile()) toggleDrawer(false);
   window.addEventListener("resize", () => map.invalidateSize(false));
 
-  // Wire up search events
   document.getElementById("search").addEventListener("keyup", (e) => {
     if (e.key === "Enter") search();
   });
 }
 
-function toggleDrawer(forceOpen = null) {
+function toggleDrawer(forceOpen = null){
   const info = document.getElementById("info");
   const willOpen = forceOpen === null ? !info.classList.contains("open") : forceOpen;
-  if (willOpen) info.classList.add("open");
-  else info.classList.remove("open");
-  setTimeout(() => map.invalidateSize(false), 260);
+  if (willOpen) info.classList.add("open"); else info.classList.remove("open");
+  setTimeout(()=>map.invalidateSize(false), 260);
 }
+function openDrawerForMobile(){ if (isMobile()) toggleDrawer(true); }
 
-function openDrawerForMobile() {
-  if (isMobile()) toggleDrawer(true);
-}
+function clearMarkers(){ markers.forEach(m=>map.removeLayer(m)); markers=[]; }
 
-function clearMarkers() {
-  markers.forEach((m) => map.removeLayer(m));
-  markers = [];
-}
-
-function showAllCampuses() {
+function showAllCampuses(){
   clearMarkers();
   let html = "<h3>All Campuses</h3>";
   const bounds = [];
-
-  campuses.forEach((c) => {
-    const marker = L.marker([c.lat, c.lng])
-      .addTo(map)
+  campuses.forEach(c=>{
+    const marker = L.marker([c.lat, c.lng]).addTo(map)
       .bindPopup(`<b>${c.name}</b><br>${c.address}`)
-      .on("click", () => showCampus(c.id));
+      .on("click", ()=>showCampus(c.id));
     markers.push(marker);
     bounds.push([c.lat, c.lng]);
-
     html += `
       <div class="campus" onclick="showCampus(${c.id})">
         <h3>${c.name}</h3>
         <p class="muted">${c.address}</p>
       </div>`;
   });
-
   document.getElementById("results").innerHTML = html;
   if (bounds.length) map.fitBounds(bounds);
 }
 
-function showCampus(campusId) {
+function showCampus(campusId){
   currentCampusId = campusId;
   clearMarkers();
-  const campus = campuses.find((c) => c.id === campusId);
-  if (!campus) return;
+  const campus = campuses.find(c=>c.id===campusId);
+  if(!campus) return;
 
-  const campusMarker = L.marker([campus.lat, campus.lng])
-    .addTo(map)
+  const campusMarker = L.marker([campus.lat, campus.lng]).addTo(map)
     .bindPopup(`<b>${campus.name}</b><br>${campus.address}`);
   markers.push(campusMarker);
 
-  campus.buildings.forEach((b) => {
+  campus.buildings.forEach(b=>{
     const marker = L.marker([b.lat, b.lng], {
-      icon: L.divIcon({ className: "building-icon leaflet-div-icon", html: "🏛️", iconSize: [30, 30] })
-    })
-      .addTo(map)
-      .bindPopup(`<b>${b.name}</b><br>${b.desc}`);
+      icon: L.divIcon({ className:"building-icon leaflet-div-icon", html:"🏛️", iconSize:[30,30] })
+    }).addTo(map).bindPopup(`<b>${b.name}</b><br>${b.desc}`);
     markers.push(marker);
   });
 
@@ -169,44 +149,40 @@ function showCampus(campusId) {
     <p class="muted">${campus.address}</p>
     <h3 style="margin-top:8px;">Buildings</h3>
     <div class="buildings-list">`;
-
-  campus.buildings.forEach((b) => {
+  campus.buildings.forEach(b=>{
     html += `
       <div class="building" onclick="zoomToBuilding(${b.lat}, ${b.lng})">
         <h4>${b.name}</h4>
         <p class="muted">${b.desc || ""}</p>
       </div>`;
   });
-
   html += `</div>`;
   document.getElementById("results").innerHTML = html;
 
-  if (isMobile()) toggleDrawer(false); // show the map first on campus switch
+  if (isMobile()) toggleDrawer(false);
 }
 
-function zoomToBuilding(lat, lng) {
-  map.setView([lat, lng], 18);
-  openDrawerForMobile(); // after you pick a building from results, open details
+function zoomToBuilding(lat,lng){
+  map.setView([lat,lng],18);
+  openDrawerForMobile();
 }
 
-function search() {
+function search(){
   const q = (document.getElementById("search").value || "").trim().toLowerCase();
-  if (!q) return showCampus(currentCampusId);
+  if(!q) return showCampus(currentCampusId);
 
-  const campusMatches = campuses.filter((c) => c.name.toLowerCase().includes(q));
+  const campusMatches = campuses.filter(c=>c.name.toLowerCase().includes(q));
   const buildingMatches = [];
-  campuses.forEach((c) =>
-    c.buildings.forEach((b) => {
-      if (b.name.toLowerCase().includes(q) || (b.desc && b.desc.toLowerCase().includes(q))) {
-        buildingMatches.push({ campus: c, building: b });
-      }
-    })
-  );
+  campuses.forEach(c=>c.buildings.forEach(b=>{
+    if (b.name.toLowerCase().includes(q) || (b.desc && b.desc.toLowerCase().includes(q))){
+      buildingMatches.push({campus:c, building:b});
+    }
+  }));
 
-  if (campusMatches.length === 0 && buildingMatches.length === 1) {
+  if (campusMatches.length===0 && buildingMatches.length===1){
     const { campus, building } = buildingMatches[0];
     showCampus(campus.id);
-    setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
+    setTimeout(()=>zoomToBuilding(building.lat, building.lng),0);
     return openDrawerForMobile();
   }
 
@@ -214,9 +190,9 @@ function search() {
   const locations = [];
   let html = `<h3>Search Results</h3><div class="search-results">`;
 
-  if (campusMatches.length) {
+  if (campusMatches.length){
     html += `<h4>Campuses</h4>`;
-    campusMatches.forEach((c) => {
+    campusMatches.forEach(c=>{
       locations.push([c.lat, c.lng]);
       html += `
         <div class="result campus-result" onclick="showCampus(${c.id})">
@@ -225,9 +201,9 @@ function search() {
     });
   }
 
-  if (buildingMatches.length) {
+  if (buildingMatches.length){
     html += `<h4>Buildings</h4>`;
-    buildingMatches.forEach(({ campus, building }) => {
+    buildingMatches.forEach(({campus, building})=>{
       locations.push([building.lat, building.lng]);
       const click = `showCampus(${campus.id}); setTimeout(()=>zoomToBuilding(${building.lat}, ${building.lng}), 0);`;
       html += `
@@ -236,13 +212,13 @@ function search() {
           <span class="muted">${building.desc || ""}</span>
         </div>`;
       const marker = L.marker([building.lat, building.lng], {
-        icon: L.divIcon({ className: "building-icon leaflet-div-icon", html: "🏛️", iconSize: [30, 30] })
+        icon: L.divIcon({ className:"building-icon leaflet-div-icon", html:"🏛️", iconSize:[30,30] })
       }).addTo(map);
       markers.push(marker);
     });
   }
 
-  if (!campusMatches.length && !buildingMatches.length) {
+  if (!campusMatches.length && !buildingMatches.length){
     html += `<p class="muted">No matches found.</p>`;
   }
 
