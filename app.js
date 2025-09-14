@@ -69,18 +69,19 @@ const campuses = [
       { name: "Student Services", lat: 32.53282, lng: -82.936, desc: "Admissions" }
     ]
   },
-{
- id: 4,
-    name: "Warner Robins",
+  {
+    id: 4,
+    name: "Warner Robins Campus",
     address: "100 University Boulevard, Warner Robins, GA 31093",
-    lat: 32.6181 , lng: -83.6088 ,
+    lat: 32.6181, lng: -83.6088,
     buildings: [
       { name: "Thomas Hall", lat: 32.6181, lng: -83.6088, desc: "Classrooms, Student Life" },
-      { name: "Academic Services Building", lat: 32.6181, lng: -83.6088 , desc: "Classrooms, labs, Walker Auditorium" }
-      { name: "Oak Hall", lat: 32.6181 , lng: -83.6088 , desc: "Academic Resource Center" },
+      { name: "Academic Services Building", lat: 32.6181, lng: -83.6088, desc: "Classrooms, labs, Walker Auditorium" },
+      { name: "Oak Hall", lat: 32.6181, lng: -83.6088, desc: "Academic Resource Center" }
     ]
   }
 ];
+
 
 /* ======= Map & UI ======= */
 let map;
