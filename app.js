@@ -70,6 +70,29 @@ const campuses = [
     ]
   }
 ];
+{
+{
+  id: 4,
+  name: Eastman Campus,
+  address: 71 Airport Road, Eastman, GA 31023,
+  lat: null, lng: null,
+  buildings: [
+    { name: Primary Academic Building, lat: null, lng: null, desc: Classrooms, teaching labs, computer labs; includes five hangars in main building for aircraft storage and maintenance },
+    { name: W.S. Stuckey Terminal Building, lat: null, lng: null, desc: Terminal building / training facility, includes air traffic control tower, simulation equipment },
+    { name: Aviation Hall, lat: null, lng: null, desc: Student housing facility (residence hall) }
+  ]
+},
+{
+  id: 5,
+  name: Warner Robins Campus,
+  address: 100 University Boulevard, Warner Robins, GA 31093,
+  lat: null, lng: null,
+  buildings: [
+    { name: Thomas Hall, lat: null, lng: null, desc: Classrooms / Student Life },
+    { name: Academic Services Building, lat: null, lng: null, desc: Classrooms, labs; includes Walker Auditorium },
+    { name: Oak Hall, lat: null, lng: null, desc: Academic Resource Center / Bookstore / STEM wing / Student Success Center }
+  ]
+}
 
 /* ======= Map & UI ======= */
 let map;
