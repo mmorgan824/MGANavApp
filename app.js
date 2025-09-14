@@ -94,14 +94,13 @@ function clearMarkers() {
 }
 
 function initMap() {
-  // Disable scroll-wheel zoom (use +/– buttons or pinch)
   map = L.map("map", { scrollWheelZoom: true }).setView([32.808092, -83.732058], 15);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"
   }).addTo(map);
 
-  showCampus(2);
+  showCampus(currentCampusId);
 
   window.addEventListener("resize", () => map.invalidateSize(false));
 
@@ -115,11 +114,13 @@ function showAllCampuses() {
   clearMarkers();
   let html = "";
   campuses.forEach(c => {
-    const marker = L.marker([c.lat, c.lng])
-      .addTo(map)
-      .bindPopup(`<b>${c.name}</b><br>${c.address}`)
-      .on("click", () => showCampus(c.id));
-    markers.push(marker);
+    if (c.lat != null && c.lng != null) {
+      const marker = L.marker([c.lat, c.lng])
+        .addTo(map)
+        .bindPopup(`<b>${c.name}</b><br>${c.address}`)
+        .on("click", () => showCampus(c.id));
+      markers.push(marker);
+    }
 
     html += `
       <div class="campus" onclick="showCampus(${c.id})">
@@ -127,8 +128,9 @@ function showAllCampuses() {
         <p class="muted">${c.address}</p>
       </div>`;
   });
+
   document.getElementById("results").innerHTML = html;
-  map.fitBounds(markers.map(m => m.getLatLng()));
+  if (markers.length) map.fitBounds(markers.map(m => m.getLatLng()));
 }
 
 function showCampus(campusId) {
@@ -137,21 +139,13 @@ function showCampus(campusId) {
   const campus = campuses.find(c => c.id === campusId);
   if (!campus) return;
 
-  const campusMarker = L.marker([campus.lat, campus.lng])
-    .addTo(map)
-    .bindPopup(`<b>${campus.name}</b><br>${campus.address}`);
-  markers.push(campusMarker);
-
-  campus.buildings.forEach(b => {
-    const marker = L.marker([b.lat, b.lng], {
-      icon: L.divIcon({ className: "building-icon", html: "🏛️", iconSize: [30, 30] })
-    })
+  if (campus.lat != null && campus.lng != null) {
+    const campusMarker = L.marker([campus.lat, campus.lng])
       .addTo(map)
-      .bindPopup(`<b>${b.name}</b><br>${b.desc || ""}`);
-    markers.push(marker);
-  });
-
-  map.setView([campus.lat, campus.lng], 15);
+      .bindPopup(`<b>${campus.name}</b><br>${campus.address}`);
+    markers.push(campusMarker);
+    map.setView([campus.lat, campus.lng], 15);
+  }
 
   let html = `
     <button class="back-btn" onclick="showAllCampuses()">← All Campuses</button>
@@ -161,11 +155,26 @@ function showCampus(campusId) {
     <div class="buildings-list">`;
 
   campus.buildings.forEach(b => {
-    html += `
-      <div class="building" onclick="zoomToBuilding(${b.lat}, ${b.lng})">
-        <h4>${b.name}</h4>
-        <p class="muted">${b.desc || ""}</p>
-      </div>`;
+    if (b.lat != null && b.lng != null) {
+      const marker = L.marker([b.lat, b.lng], {
+        icon: L.divIcon({ className: "building-icon", html: "🏛️", iconSize: [30, 30] })
+      })
+        .addTo(map)
+        .bindPopup(`<b>${b.name}</b><br>${b.desc || ""}`);
+      markers.push(marker);
+
+      html += `
+        <div class="building" onclick="zoomToBuilding(${b.lat}, ${b.lng})">
+          <h4>${b.name}</h4>
+          <p class="muted">${b.desc || ""}</p>
+        </div>`;
+    } else {
+      html += `
+        <div class="building">
+          <h4>${b.name}</h4>
+          <p class="muted">${b.desc || ""}</p>
+        </div>`;
+    }
   });
 
   html += `</div>`;
@@ -173,7 +182,9 @@ function showCampus(campusId) {
 }
 
 function zoomToBuilding(lat, lng) {
-  map.setView([lat, lng], 18);
+  if (lat != null && lng != null) {
+    map.setView([lat, lng], 18);
+  }
 }
 
 function search() {
@@ -186,11 +197,13 @@ function search() {
     if (b.name.toLowerCase().includes(q)) buildingMatches.push({ campus: c, building: b });
   }));
 
-  // Single building match → jump straight there
   if (campusMatches.length === 0 && buildingMatches.length === 1) {
     const { campus, building } = buildingMatches[0];
     showCampus(campus.id);
-    return setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
+    if (building.lat != null && building.lng != null) {
+      setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
+    }
+    return;
   }
 
   clearMarkers();
@@ -200,7 +213,7 @@ function search() {
   if (campusMatches.length) {
     html += `<h4>Campuses</h4>`;
     campusMatches.forEach(c => {
-      bounds.push([c.lat, c.lng]);
+      if (c.lat != null && c.lng != null) bounds.push([c.lat, c.lng]);
       html += `
         <div class="result campus-result" onclick="showCampus(${c.id})">
           <strong>${c.name}</strong><br><span class="muted">${c.address}</span>
@@ -211,17 +224,21 @@ function search() {
   if (buildingMatches.length) {
     html += `<h4>Buildings</h4>`;
     buildingMatches.forEach(({ campus, building }) => {
-      bounds.push([building.lat, building.lng]);
-      const click = `showCampus(${campus.id}); setTimeout(()=>zoomToBuilding(${building.lat}, ${building.lng}), 0);`;
+      if (building.lat != null && building.lng != null) bounds.push([building.lat, building.lng]);
+      const click = building.lat != null && building.lng != null
+        ? `showCampus(${campus.id}); setTimeout(()=>zoomToBuilding(${building.lat}, ${building.lng}), 0);`
+        : `showCampus(${campus.id});`;
       html += `
         <div class="result building-result" onclick='${click}'>
           <strong>${building.name}</strong> <span class="muted">(${campus.name})</span><br>
           <span class="muted">${building.desc || ""}</span>
         </div>`;
-      const m = L.marker([building.lat, building.lng], {
-        icon: L.divIcon({ className: "building-icon", html: "🏛️", iconSize: [30, 30] })
-      }).addTo(map);
-      markers.push(m);
+      if (building.lat != null && building.lng != null) {
+        const m = L.marker([building.lat, building.lng], {
+          icon: L.divIcon({ className: "building-icon", html: "🏛️", iconSize: [30, 30] })
+        }).addTo(map);
+        markers.push(m);
+      }
     });
   }
 
