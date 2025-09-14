@@ -85,11 +85,11 @@ const campuses = [
     id: 5,
     name: "Eastman Campus",
     address: "71 Airport Road, Eastman, GA 31023",
-    lat: 32.213, lng: -83.181,
+    lat: 32.2079, lng: -83.1279 ,
     buildings: [
-      { name: "Primary Academic Building", lat: 32.213, lng: -83.181, desc: "Classrooms, Teaching Labs, Computer Labs; five hangars in main building for aircraft storage and maintenance" },
-      { name: "W.S. Stuckey Terminal Building", lat: 32.213, lng: -83.181, desc: "Terminal Building / Training Facility, Air Traffic Control Tower, Simulation Equipment" },
-      { name: "Aviation Hall", lat: 32.213, lng: -83.181, desc: "Student housing facility" }
+      { name: "Primary Academic Building", lat: 32.2079, lng: -83.1279, desc: "Classrooms, Teaching Labs, Computer Labs; five hangars in main building for aircraft storage and maintenance" },
+      { name: "W.S. Stuckey Terminal Building", lat: 32.2079, lng: -83.1279, desc: "Terminal Building / Training Facility, Air Traffic Control Tower, Simulation Equipment" },
+      { name: "Aviation Hall", lat: 32.2079, lng: -83.1279, desc: "Student housing facility" }
     ]
   }
 ];
