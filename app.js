@@ -68,8 +68,7 @@ const campuses = [
       { name: "Academic Building", lat: 32.532765, lng: -82.935265, desc: "Classrooms" },
       { name: "Student Services", lat: 32.53282, lng: -82.936, desc: "Admissions" }
     ]
-  }
-  ];
+  },
 {
  id: 4,
     name: "Warner Robins",
