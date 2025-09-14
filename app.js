@@ -73,7 +73,7 @@ const campuses = [
  id: 4,
     name: "Warner Robins",
     address: "100 University Boulevard, Warner Robins, GA 31093",
-    lat: , lng:,
+    lat: 32.6181 , lng: -83.6088 ,
     buildings: [
       { name: "Thomas Hall", lat: 32.6181, lng: -83.6088, desc: "Classrooms, Student Life" },
       { name: "Academic Services Building", lat: 32.6181, lng: -83.6088 , desc: "Classrooms, labs, Walker Auditorium" }
