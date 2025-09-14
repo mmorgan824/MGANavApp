@@ -102,6 +102,8 @@ let currentCampusId = 2;
 function clearMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
+  // Also hide building image when markers are cleared
+  document.getElementById("building-image").style.display = "none";
 }
 
 function initMap() {
@@ -167,7 +169,7 @@ function showCampus(campusId) {
       }).addTo(map).bindPopup(`<b>${b.name}</b><br>${b.desc || ""}`);
       markers.push(marker);
 
-      html += `<div class="building" onclick="zoomToBuilding(${b.lat}, ${b.lng})">
+      html += `<div class="building" onclick='zoomToBuilding(${b.lat}, ${b.lng}, ${JSON.stringify(b)})'>
           <h4>${b.name}</h4>
           <p class="muted">${b.desc || ""}</p>
         </div>`;
@@ -183,8 +185,17 @@ function showCampus(campusId) {
   document.getElementById("results").innerHTML = html;
 }
 
-function zoomToBuilding(lat, lng) {
+function zoomToBuilding(lat, lng, building) {
   if (lat != null && lng != null) map.setView([lat, lng], 18);
+
+  const imgEl = document.getElementById("building-image");
+  if (building && building.image) {
+    imgEl.src = building.image;
+    imgEl.alt = building.name;
+    imgEl.style.display = "block";
+  } else {
+    imgEl.style.display = "none";
+  }
 }
 
 function search() {
@@ -200,7 +211,7 @@ function search() {
   if (campusMatches.length === 0 && buildingMatches.length === 1) {
     const { campus, building } = buildingMatches[0];
     showCampus(campus.id);
-    if (building.lat != null && building.lng != null) setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
+    if (building.lat != null && building.lng != null) setTimeout(() => zoomToBuilding(building.lat, building.lng, building), 0);
     return;
   }
 
@@ -223,7 +234,7 @@ function search() {
     buildingMatches.forEach(({ campus, building }) => {
       if (building.lat != null && building.lng != null) bounds.push([building.lat, building.lng]);
       const click = building.lat != null && building.lng != null
-        ? `showCampus(${campus.id}); setTimeout(()=>zoomToBuilding(${building.lat}, ${building.lng}), 0);`
+        ? `showCampus(${campus.id}); setTimeout(()=>zoomToBuilding(${building.lat}, ${building.lng}, ${JSON.stringify(building)}), 0);`
         : `showCampus(${campus.id});`;
       html += `<div class="result building-result" onclick='${click}'>
           <strong>${building.name}</strong> <span class="muted">(${campus.name})</span><br>
