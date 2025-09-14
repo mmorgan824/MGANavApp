@@ -42,7 +42,7 @@ const campuses = [
     lat: 32.808092, lng: -83.732058,
     buildings: [
       { name: "Administration (ADMIN)", lat: 32.808127, lng: -83.732117, desc: "Student Services" },
-      { name: "Library (LIB)", lat: 32.808469, lng: -83.732992, desc: "Administration" },
+      { name: "Library (LIB)", lat: 32.808469, lng: -83.732992, desc: "Library", images: "IMG/Library,_Middle_Georgia_State_University_Macon_campus.jpg" },
       { name: "Plant Services", lat: 32.806992, lng: -83.733609, desc: "Facilities" },
       { name: "Campus Support Services (CSS)", lat: 32.808145, lng: -83.733839, desc: "Campus Support Services" },
       { name: "Mathematics (MATH)", lat: 32.808739, lng: -83.733855, desc: "Math" },
@@ -54,9 +54,9 @@ const campuses = [
       { name: "Music (MUS)", lat: 32.811622, lng: -83.731222, desc: "Music" },
       { name: "Arts Complex (ART)", lat: 32.809319, lng: -83.731806, desc: "Art" },
       { name: "School of Arts & Letters (SOAL)", lat: 32.80894, lng: -83.732091, desc: "" },
-      { name: "Recreation & Wellness Center (REC)", lat: 32.811571, lng: -83.733979, desc: "Recreation" },
-      { name: "Lakeview Pointe (LP)", lat: 32.812787, lng: -83.733544, desc: "Residence hall" },
-      { name: "University Pointe (UP)", lat: 32.810116, lng: -83.736763, desc: "Residence hall" },
+      { name: "Recreation & Wellness Center (REC)", lat: 32.811571, lng: -83.733979, desc: "Recreation", images: "IMG/wellness.jpg" },
+      { name: "Lakeview Pointe (LP)", lat: 32.812787, lng: -83.733544, desc: "Residence hall", images: "IMG/lakeview Pointe.jpg" },
+      { name: "University Pointe (UP)", lat: 32.810116, lng: -83.736763, desc: "Residence hall", images: "IMG/university pointe.jpg" },
       { name: "Peyton T. Anderson Enrollment Center (PAC)", lat: 32.809854, lng: -83.729129, desc: "Enrollment" }
     ]
   },
