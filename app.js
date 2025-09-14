@@ -1,4 +1,5 @@
 /* ======= Data ======= */
+/* ======= Data ======= */
 const campuses = [
   {
     id: 1,
@@ -69,32 +70,29 @@ const campuses = [
       { name: "Student Services", lat: 32.53282, lng: -82.936, desc: "Admissions" }
     ]
   },
- {
-  id: 4,
-  name: "Warner Robins Campus",
-  address: "100 University Boulevard, Warner Robins, GA 31093",
-  lat: 32.6181,
-  lng: -83.6088,
-  buildings: [
-    { name: "Thomas Hall", lat: 32.6181, lng: -83.6088, desc: "Classrooms, Student Life" },
-    { name: "Academic Services Building", lat: 32.6181, lng: -83.6088, desc: "Classrooms, labs, Walker Auditorium" },
-    { name: "Oak Hall", lat: 32.6181, lng: -83.6088, desc: "Academic Resource Center" }
-  ]
-},
-{
-  id: 5,
-  name: "Eastman Campus",
-  address: "71 Airport Road, Eastman, GA 31023",
-  lat: 32.213,
-  lng: -83.181,
-  buildings: [
-    { name: "Primary Academic Building", lat: 32.213, lng: -83.181, desc: "Classrooms, Teaching Labs, Computer Labs; five hangars in main building for aircraft storage and maintenance" },
-    { name: "W.S. Stuckey Terminal Building", lat: 32.213, lng: -83.181, desc: "Terminal Building / Training Facility, Air Traffic Control Tower, Simulation Equipment" },
-    { name: "Aviation Hall", lat: 32.213, lng: -83.181, desc: "Student housing facility" }
-  ]
-}
-  ];
-
+  {
+    id: 4,
+    name: "Warner Robins Campus",
+    address: "100 University Boulevard, Warner Robins, GA 31093",
+    lat: 32.6181, lng: -83.6088,
+    buildings: [
+      { name: "Thomas Hall", lat: 32.6181, lng: -83.6088, desc: "Classrooms, Student Life" },
+      { name: "Academic Services Building", lat: 32.6181, lng: -83.6088, desc: "Classrooms, labs, Walker Auditorium" },
+      { name: "Oak Hall", lat: 32.6181, lng: -83.6088, desc: "Academic Resource Center" }
+    ]
+  },
+  {
+    id: 5,
+    name: "Eastman Campus",
+    address: "71 Airport Road, Eastman, GA 31023",
+    lat: 32.213, lng: -83.181,
+    buildings: [
+      { name: "Primary Academic Building", lat: 32.213, lng: -83.181, desc: "Classrooms, Teaching Labs, Computer Labs; five hangars in main building for aircraft storage and maintenance" },
+      { name: "W.S. Stuckey Terminal Building", lat: 32.213, lng: -83.181, desc: "Terminal Building / Training Facility, Air Traffic Control Tower, Simulation Equipment" },
+      { name: "Aviation Hall", lat: 32.213, lng: -83.181, desc: "Student housing facility" }
+    ]
+  }
+];
 
 /* ======= Map & UI ======= */
 let map;
@@ -116,11 +114,8 @@ function initMap() {
   showCampus(currentCampusId);
 
   window.addEventListener("resize", () => map.invalidateSize(false));
-
   document.getElementById("search-btn").addEventListener("click", search);
-  document.getElementById("search").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") search();
-  });
+  document.getElementById("search").addEventListener("keydown", (e) => { if (e.key === "Enter") search(); });
 }
 
 function showAllCampuses() {
@@ -135,8 +130,7 @@ function showAllCampuses() {
       markers.push(marker);
     }
 
-    html += `
-      <div class="campus" onclick="showCampus(${c.id})">
+    html += `<div class="campus" onclick="showCampus(${c.id})">
         <h3>${c.name}</h3>
         <p class="muted">${c.address}</p>
       </div>`;
@@ -160,8 +154,7 @@ function showCampus(campusId) {
     map.setView([campus.lat, campus.lng], 15);
   }
 
-  let html = `
-    <button class="back-btn" onclick="showAllCampuses()">← All Campuses</button>
+  let html = `<button class="back-btn" onclick="showAllCampuses()">← All Campuses</button>
     <h2 class="panel-title">${campus.name}</h2>
     <p class="muted">${campus.address}</p>
     <h3>Buildings</h3>
@@ -171,19 +164,15 @@ function showCampus(campusId) {
     if (b.lat != null && b.lng != null) {
       const marker = L.marker([b.lat, b.lng], {
         icon: L.divIcon({ className: "building-icon", html: "🏛️", iconSize: [30, 30] })
-      })
-        .addTo(map)
-        .bindPopup(`<b>${b.name}</b><br>${b.desc || ""}`);
+      }).addTo(map).bindPopup(`<b>${b.name}</b><br>${b.desc || ""}`);
       markers.push(marker);
 
-      html += `
-        <div class="building" onclick="zoomToBuilding(${b.lat}, ${b.lng})">
+      html += `<div class="building" onclick="zoomToBuilding(${b.lat}, ${b.lng})">
           <h4>${b.name}</h4>
           <p class="muted">${b.desc || ""}</p>
         </div>`;
     } else {
-      html += `
-        <div class="building">
+      html += `<div class="building">
           <h4>${b.name}</h4>
           <p class="muted">${b.desc || ""}</p>
         </div>`;
@@ -195,9 +184,7 @@ function showCampus(campusId) {
 }
 
 function zoomToBuilding(lat, lng) {
-  if (lat != null && lng != null) {
-    map.setView([lat, lng], 18);
-  }
+  if (lat != null && lng != null) map.setView([lat, lng], 18);
 }
 
 function search() {
@@ -213,9 +200,7 @@ function search() {
   if (campusMatches.length === 0 && buildingMatches.length === 1) {
     const { campus, building } = buildingMatches[0];
     showCampus(campus.id);
-    if (building.lat != null && building.lng != null) {
-      setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
-    }
+    if (building.lat != null && building.lng != null) setTimeout(() => zoomToBuilding(building.lat, building.lng), 0);
     return;
   }
 
@@ -227,8 +212,7 @@ function search() {
     html += `<h4>Campuses</h4>`;
     campusMatches.forEach(c => {
       if (c.lat != null && c.lng != null) bounds.push([c.lat, c.lng]);
-      html += `
-        <div class="result campus-result" onclick="showCampus(${c.id})">
+      html += `<div class="result campus-result" onclick="showCampus(${c.id})">
           <strong>${c.name}</strong><br><span class="muted">${c.address}</span>
         </div>`;
     });
@@ -241,8 +225,7 @@ function search() {
       const click = building.lat != null && building.lng != null
         ? `showCampus(${campus.id}); setTimeout(()=>zoomToBuilding(${building.lat}, ${building.lng}), 0);`
         : `showCampus(${campus.id});`;
-      html += `
-        <div class="result building-result" onclick='${click}'>
+      html += `<div class="result building-result" onclick='${click}'>
           <strong>${building.name}</strong> <span class="muted">(${campus.name})</span><br>
           <span class="muted">${building.desc || ""}</span>
         </div>`;
@@ -255,10 +238,7 @@ function search() {
     });
   }
 
-  if (!campusMatches.length && !buildingMatches.length) {
-    html += `<p class="muted">No matches found.</p>`;
-  }
-
+  if (!campusMatches.length && !buildingMatches.length) html += `<p class="muted">No matches found.</p>`;
   html += `</div>`;
   document.getElementById("results").innerHTML = html;
   if (bounds.length) map.fitBounds(bounds);
