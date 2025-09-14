@@ -75,9 +75,9 @@ const campuses = [
     address: "100 University Boulevard, Warner Robins, GA 31093",
     lat: , lng:,
     buildings: [
-      { name: "Thomas Hall", lat: null, lng: null, desc: "Classrooms, Student Life" },
-      { name: "Academic Services Building", lat: null, lng: null, desc: "Classrooms, labs, Walker Auditorium" }
-      { name: "Oak Hall", lat: null , lng: null , desc: "Academic Resource Center" },
+      { name: "Thomas Hall", lat: 32.6181, lng: -83.6088, desc: "Classrooms, Student Life" },
+      { name: "Academic Services Building", lat: 32.6181, lng: -83.6088 , desc: "Classrooms, labs, Walker Auditorium" }
+      { name: "Oak Hall", lat: 32.6181 , lng: -83.6088 , desc: "Academic Resource Center" },
     ]
   }
 ];
