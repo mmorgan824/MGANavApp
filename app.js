@@ -74,22 +74,22 @@ const campuses = [
     id: 4,
     name: "Warner Robins Campus",
     address: "100 University Boulevard, Warner Robins, GA 31093",
-    lat: 32.6181, lng: -83.6088,
+    lat: 32.613917, lng: -83.605486,
     buildings: [
-      { name: "Thomas Hall", lat: 32.6181, lng: -83.6088, desc: "Classrooms, Student Life" },
-      { name: "Academic Services Building", lat: 32.6181, lng: -83.6088, desc: "Classrooms, labs, Walker Auditorium" },
-      { name: "Oak Hall", lat: 32.6181, lng: -83.6088, desc: "Academic Resource Center" }
+      { name: "Thomas Hall", lat: 32.618323, lng: -83.608787, desc: "Classrooms, Student Life" },
+      { name: "Academic Services Building", lat: 32.617840, lng: -83.608701, desc: "Classrooms, labs, Walker Auditorium" },
+      { name: "Oak Hall", lat: 32.615262, lng: -83.607937, desc: "Academic Resource Center" }
     ]
   },
   {
     id: 5,
     name: "Eastman Campus",
     address: "71 Airport Road, Eastman, GA 31023",
-    lat: 32.2079, lng: -83.1279 ,
+    lat: 32.208394, lng: -83.128126,
     buildings: [
-      { name: "Primary Academic Building", lat: 32.2079, lng: -83.1279, desc: "Classrooms, Teaching Labs, Computer Labs; five hangars in main building for aircraft storage and maintenance" },
-      { name: "W.S. Stuckey Terminal Building", lat: 32.2079, lng: -83.1279, desc: "Terminal Building / Training Facility, Air Traffic Control Tower, Simulation Equipment" },
-      { name: "Aviation Hall", lat: 32.2079, lng: -83.1279, desc: "Student housing facility" }
+      { name: "Primary Academic Building", lat: 32.207940, lng: -83.127939, desc: "Classrooms, Teaching Labs, Computer Labs; five hangars in main building for aircraft storage and maintenance" },
+      { name: "W.S. Stuckey Terminal Building", lat: 32.213406, lng: -83.125911, desc: "Terminal Building / Training Facility, Air Traffic Control Tower, Simulation Equipment" },
+      { name: "Aviation Hall", lat: 32.212053, lng: -83.126727, desc: "Student housing facility" }
     ]
   }
 ];
