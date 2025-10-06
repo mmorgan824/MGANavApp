@@ -47,10 +47,10 @@ const campuses = [
       { name: "Campus Support Services (CSS)", lat: 32.808145, lng: -83.733839, desc: "Campus Support Services" },
       { name: "Mathematics (MATH)", lat: 32.808739, lng: -83.733855, desc: "Math" },
       { name: "Math Auditorium (AUD)", lat: 32.808717, lng: -83.73414, desc: "Math" },
-      { name: "Charles H. Jones Building (Jones)", lat: 32.808732, lng: -83.735159, desc: "" },
+      { name: "Charles H. Jones Building (Jones)", lat: 32.808732, lng: -83.735159, desc: "", image: "IMG/jones.jpg" },
       { name: "Professional Sciences Center (PSC)", lat: 32.809573, lng: -83.734059, desc: "" },
       { name: "Teacher Education Building (TEB)", lat: 32.809852, lng: -83.732879, desc: "" },
-      { name: "Student Life Center (SLC)", lat: 32.810712, lng: -83.732085, desc: "Student Life" },
+      { name: "Student Life Center (SLC)", lat: 32.810712, lng: -83.732085, desc: "Student Life", img: "IMG/studentlife.jpg" },
       { name: "Music (MUS)", lat: 32.811622, lng: -83.731222, desc: "Music" },
       { name: "Arts Complex (ART)", lat: 32.809319, lng: -83.731806, desc: "Art" },
       { name: "School of Arts & Letters (SOAL)", lat: 32.80894, lng: -83.732091, desc: "" },
@@ -66,7 +66,7 @@ const campuses = [
     address: "800 Veterans Blvd, Dublin, GA 31021",
     lat: 32.532837, lng: -82.935989,
     buildings: [
-      { name: "Academic Building", lat: 32.532765, lng: -82.935265, desc: "Classrooms" },
+      { name: "Academic Building", lat: 32.532765, lng: -82.935265, desc: "Classrooms", images: "IMG/Dublin Academic Building.jpg" },
       { name: "Student Services", lat: 32.53282, lng: -82.936, desc: "Admissions" }
     ]
   },
@@ -76,7 +76,7 @@ const campuses = [
     address: "100 University Boulevard, Warner Robins, GA 31093",
     lat: 32.613917, lng: -83.605486,
     buildings: [
-      { name: "Thomas Hall", lat: 32.618323, lng: -83.608787, desc: "Classrooms, Student Life" },
+      { name: "Thomas Hall", lat: 32.618323, lng: -83.608787, desc: "Classrooms, Student Life", images: "IMG/WR Thomas Hall.jpg" },
       { name: "Academic Services Building", lat: 32.617840, lng: -83.608701, desc: "Classrooms, labs, Walker Auditorium" },
       { name: "Oak Hall", lat: 32.615262, lng: -83.607937, desc: "Academic Resource Center" }
     ]
@@ -88,8 +88,8 @@ const campuses = [
     lat: 32.208394, lng: -83.128126,
     buildings: [
       { name: "Primary Academic Building", lat: 32.207940, lng: -83.127939, desc: "Classrooms, Teaching Labs, Computer Labs; five hangars in main building for aircraft storage and maintenance" },
-      { name: "W.S. Stuckey Terminal Building", lat: 32.213406, lng: -83.125911, desc: "Terminal Building / Training Facility, Air Traffic Control Tower, Simulation Equipment" },
-      { name: "Aviation Hall", lat: 32.212053, lng: -83.126727, desc: "Student housing facility" }
+      { name: "W.S. Stuckey Terminal Building", lat: 32.213406, lng: -83.125911, desc: "Terminal Building / Training Facility, Air Traffic Control Tower, Simulation Equipment", images: "IMG/Eastman WS Stuckey Terminal.jpg" },
+      { name: "Aviation Hall", lat: 32.212053, lng: -83.126727, desc: "Student housing facility", images: "IMG/Eastman Aviation Hall" }
     ]
   }
 ];
