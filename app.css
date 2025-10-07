@@ -6,7 +6,7 @@ body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: #111827;
   line-height: 1.5;
-  background: url("https://www.mga.edu/marketing-communications/images/logos/MiddleGeorgia_Inst_Vert_DkBgrnd.jpg") center/cover fixed no-repeat;
+  background: url("#") center/cover fixed no-repeat;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   padding: 16px;
