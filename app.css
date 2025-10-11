@@ -1,10 +1,46 @@
-/* Base */
+/* ==============================
+   MGA BRAND THEME — tokens
+   ============================== */
+:root{
+  /* Brand colors (MGA guide) */
+  --mga-267c: #633393;   /* Pantone 267C */
+  --mga-2685c:#42337E;   /* Pantone 2685C */
+  --mga-429c: #B0B6BB;   /* Pantone 429C */
+  --mga-428c: #C9CED1;   /* Pantone 428C */
+  --mga-black:#000000;
+
+  /* App tokens derived from brand */
+  --brand: var(--mga-267c);
+  --brand-strong: var(--mga-2685c);
+  --text: #111827;
+  --muted: #6b7280;
+  --surface: #ffffff;
+  --panel-bg: rgba(255,255,255,0.96);
+  --border: #e5e7eb;
+  --border-2: #e2e8f0;
+  --hover: #f3f4f6;
+  --shadow: 0 1px 2px rgba(15,23,42,.06), 0 6px 24px rgba(15,23,42,.06);
+
+  /* Radii */
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 12px;
+
+  /* Typography per guide: Gotham -> Arial/Georgia fallbacks */
+  --font-sans: "Gotham", "Gotham Book", Arial, "Segoe UI", Roboto, system-ui, sans-serif;
+  --font-sans-bold: "Gotham Bold", "Gotham", Arial, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+
+/* ==============================
+   Base
+   ============================== */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body {
+
+body{
   margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: #111827;
+  font-family: var(--font-sans);
+  color: var(--text);
   line-height: 1.5;
   background: url("#") center/cover fixed no-repeat;
   -webkit-font-smoothing: antialiased;
@@ -12,136 +48,195 @@ body {
   padding: 16px;
 }
 
-/* Shell */
-.container {
+/* Accessible focus */
+:focus-visible{
+  outline: 3px solid color-mix(in oklab, var(--brand), white 25%);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ==============================
+   Shell
+   ============================== */
+.container{
   max-width: 1100px;
   margin: 0 auto;
-  background: rgba(255,255,255,0.95);
-  border-radius: 12px;
+  background: var(--panel-bg);
+  border: 1px solid var(--mga-428c); /* light brand gray edge */
+  border-radius: var(--r-lg);
   padding: 16px;
+  box-shadow: var(--shadow);
 }
 
-/* Header */
-h1 {
+/* ==============================
+   Header
+   ============================== */
+h1{
   margin: 8px 0 12px;
   text-align: center;
-  color: #0b3a6e;
+  color: var(--brand);
+  font-family: var(--font-sans-bold);
 }
 
-/* Search */
-.search-box {
+/* ==============================
+   Search
+   ============================== */
+.search-box{
   display: flex;
   justify-content: center;
   gap: 0;
   margin: 8px 0 14px;
 }
-.search-box input {
+.search-box input{
   padding: 10px 12px;
   width: min(520px, 80vw);
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--mga-428c);
   border-right: 0;
-  border-radius: 8px 0 0 8px;
+  border-radius: var(--r-sm) 0 0 var(--r-sm);
+  background: var(--surface);
 }
-.search-box button {
-  padding: 10px 14px;
-  background: #0b3a6e;
-  color: #fff;
-  border: 1px solid #0b3a6e;
-  border-radius: 0 8px 8px 0;
-  cursor: pointer;
-}
-.search-box button:hover { opacity: .92; }
+.search-box input::placeholder{ color: #64748b; }
 
-/* Desktop layout: 2 columns */
-.map-container {
+.search-box button{
+  padding: 10px 14px;
+  background: var(--brand);
+  color: #fff;
+  border: 1px solid var(--brand-strong);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  cursor: pointer;
+  transition: background .16s ease, opacity .16s ease, transform .16s ease;
+}
+.search-box button:hover{ background: var(--brand-strong); }
+.search-box button:active{ transform: translateY(1px); }
+
+/* ==============================
+   Desktop layout: 2 columns
+   ============================== */
+.map-container{
   display: grid;
   grid-template-columns: 1fr 360px;  /* map | panel */
   gap: 16px;
   align-items: start;
 }
 
-/* Map */
-#map {
+/* ==============================
+   Map
+   ============================== */
+#map{
   height: 70vh;
   min-height: 420px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: clip;
 }
 
-/* Panel */
-#info {
+/* ==============================
+   Panel
+   ============================== */
+#info{
   position: sticky;
   top: 12px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   padding: 12px 12px 16px;
   max-height: 70vh;
   overflow: auto;
+  box-shadow: var(--shadow);
 }
-.panel-title { margin: 0 0 8px; }
+.panel-title{ 
+  margin: 0 0 8px; 
+  color: var(--brand); 
+  font-family: var(--font-sans-bold); 
+}
 
-/* Cards */
-.muted { color: #6b7280; font-size: 0.95rem; }
-.back-btn {
+/* ==============================
+   Cards
+   ============================== */
+.muted{ color: var(--muted); font-size: 0.95rem; }
+
+.back-btn{
   margin: 8px 0 10px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
   padding: 6px 10px;
   background: #f8fafc;
   cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
 }
-.back-btn:hover { background: #eef2f7; }
+.back-btn:hover{ background: #eef2f7; }
+.back-btn:active{ transform: translateY(1px); }
 
-.campus, .building, .result {
+.campus, .building, .result{
   background: #ffffff;          /* solid white box look */
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
   padding: 14px;
   margin-bottom: 14px;
   cursor: pointer;
-  transition: background .15s, border-color .15s;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease;
 }
-.campus:hover, .building:hover, .result:hover {
-  background: #f3f4f6;
-  border-color: #d1d5db;
+.campus:hover, .building:hover, .result:hover{
+  background: var(--hover);
+  border-color: var(--mga-429c); /* brand gray hover */
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
 }
-.campus h3, .building h4, .result strong {
+.campus h3, .building h4, .result strong{
   color: #111827;
   margin: 0 0 6px;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: var(--font-sans-bold);
 }
 
 /* Scrollable content inside the panel */
-.buildings-list, .search-results {
+.buildings-list, .search-results{
   max-height: 54vh;
   overflow-y: auto;   /* always show vertical scroll when needed */
   overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mga-428c) transparent;
+}
+.buildings-list::-webkit-scrollbar,
+.search-results::-webkit-scrollbar{ width: 10px; }
+.buildings-list::-webkit-scrollbar-thumb,
+.search-results::-webkit-scrollbar-thumb{
+  background: var(--mga-428c);
+  border-radius: 999px;
 }
 
-/* Mobile: stack layout (no drawer) */
-@media (max-width: 900px) {
-  .container { padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.95); }
-  .map-container { display: block; }
+/* ==============================
+   Mobile: stack layout (no drawer)
+   ============================== */
+@media (max-width: 900px){
+  .container{ padding: 12px; border-radius: var(--r-lg); background: var(--panel-bg); }
+  .map-container{ display: block; }
 
-  #map {
+  #map{
     height: 56vh;              /* map first, then panel */
     min-height: 320px;
-    border-radius: 12px;
+    border-radius: var(--r-lg);
   }
 
-  #info {
+  #info{
     position: static;          /* just flows under the map */
     max-height: none;
     margin-top: 12px;
   }
 
-  .buildings-list, .search-results {
+  .buildings-list, .search-results{
     max-height: 40vh;          /* fixed height on mobile */
     overflow-y: auto;          /* allow scrolling inside */
     overflow-x: hidden;
   }
 }
 
-/* Leaflet zoom buttons rounded */
-.leaflet-control-zoom a { border-radius: 8px !important; }
+/* Leaflet zoom buttons rounded (brand-friendly) */
+.leaflet-control-zoom a{ 
+  border-radius: var(--r-sm) !important; 
+  border: 1px solid var(--mga-428c) !important;
+  background: var(--surface) !important;
+  color: var(--brand) !important;
+}
