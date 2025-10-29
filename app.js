@@ -45,7 +45,7 @@ const campuses = [
     lat: 32.808092, lng: -83.732058,
     buildings: [
       { name: "Administration (ADMIN)", lat: 32.808127, lng: -83.732117, desc: "Student Services", longDesc: "Administration (ADMIN) – Central building for university leadership, including Academic Affairs, Finance & Operations, the President’s Office, and University Advancement. Serves as the main administrative hub for MGA’s Macon campus." },
-      { name: "Library (LIB)", lat: 32.808469, lng: -83.732992, desc: "Library", longDesc: "Library (LLIB) – Features the Library Café, Student Success Center, and Museum of Technology. Offers research resources, study areas, and the Technical Assistance Center for students.", image: "Library,_Middle_Georgia_State_University_Macon_campus.jpg" },
+      { name: "Library (LIB)", lat: 32.808469, lng: -83.732992, desc: "Library", longDesc: "Library (LLIB) – Features the Library Café, Student Success Center, and Museum of Technology. Offers research resources, study areas, and the Technical Assistance Center for students.", image: "IMG/Library,_Middle_Georgia_State_University_Macon_campus.jpg" },
       { name: "Plant Services", lat: 32.806992, lng: -83.733609, desc: "Facilities", longDesc: "Facilities (FAC) – Houses the offices and workshops for facilities management, maintenance, and campus operations. Supports building upkeep and university infrastructure services." },
       { name: "Campus Support Services (CSS)", lat: 32.808145, lng: -83.733839, desc: "Campus Support Services", longDesc: "Campus Support Services (CSS) – Provides Police and Technology Resources for the campus community. Ensures safety, technical support, and campus security." },
       { name: "Mathematics (MATH)", lat: 32.808739, lng: -83.733855, desc: "Math", longDesc: "Mathematics (MATH) – Home to the Mathematics Department, offering classrooms, faculty offices, and math tutoring spaces. Focused on undergraduate instruction in math and related fields." },
@@ -57,9 +57,9 @@ const campuses = [
       { name: "Music (MUS)", lat: 32.811622, lng: -83.731222, desc: "Music", longDesc: "Music (MUS) – Contains the Gymnasium, Health Clinic, and Music Department facilities. Used for rehearsals, performances, wellness services, and student recreation." },
       { name: "Arts Complex (ART)", lat: 32.809319, lng: -83.731806, desc: "Art", longDesc: "Arts Complex (ART) – Features the Art Studio, Rehearsal Hall, and Theatre. Serves as the creative center for visual and performing arts programs." },
       { name: "School of Arts & Letters (SOAL)", lat: 32.80894, lng: -83.732091, desc: "", longDesc: "School of Arts & Letters (SOAL) – Houses the English, Media, Culture & the Arts, and History departments. Includes classrooms, faculty offices, and collaborative learning areas." },
-      { name: "Recreation & Wellness Center (REC)", lat: 32.811571, lng: -83.733979, desc: "Recreation", longDesc: "Recreation & Wellness Center (REC) – Modern fitness and recreation facility offering workout equipment, group fitness rooms, locker rooms, and Papa Johns.", image: "wellness.jpg" },
-      { name: "Lakeview Pointe (LP)", lat: 32.812787, lng: -83.733544, desc: "Residence hall", longDesc: "Lakeview Pointe (LP) – On-campus student housing offering apartment-style suites with kitchens, lounges, laundry, and study areas overlooking the lake.", image: "lakeview Pointe.jpg" },
-      { name: "University Pointe (UP)", lat: 32.810116, lng: -83.736763, desc: "Residence hall", longDesc: "University Pointe (UP) – Upper-level student housing with suite-style rooms and shared common spaces. Includes Wi-Fi, study lounges, and recreational areas.", image: "university pointe.jpg" },
+      // { name: "Recreation & Wellness Center (REC)", lat: 32.811571, lng: -83.733979, desc: "Recreation", longDesc: "Recreation & Wellness Center (REC) – Modern fitness and recreation facility offering workout equipment, group fitness rooms, locker rooms, and Papa Johns.", image: "IMG/wellness.jpg" },
+      { name: "Lakeview Pointe (LP)", lat: 32.812787, lng: -83.733544, desc: "Residence hall", longDesc: "Lakeview Pointe (LP) – On-campus student housing offering apartment-style suites with kitchens, lounges, laundry, and study areas overlooking the lake.", image: "IMG/lakeview Pointe.jpg" },
+      { name: "University Pointe (UP)", lat: 32.810116, lng: -83.736763, desc: "Residence hall", longDesc: "University Pointe (UP) – Upper-level student housing with suite-style rooms and shared common spaces. Includes Wi-Fi, study lounges, and recreational areas.", image: "IMG/university pointe.jpg" },
       { name: "Peyton T. Anderson Enrollment Center (PAC)", lat: 32.809854, lng: -83.729129, desc: "Enrollment", longDesc: "Peyton T. Anderson Enrollment Center (PAC) – Serves as the main location for Admissions and Enrollment Support Services for all MGA campuses. Guides registration, financial aid, and student onboarding." }
     ]
   },
@@ -79,7 +79,7 @@ const campuses = [
     address: "100 University Boulevard, Warner Robins, GA 31093",
     lat: 32.613917, lng: -83.605486,
     buildings: [
-      { name: "Thomas Hall", lat: 32.618323, lng: -83.608787, desc: "Classrooms, Student Life", longDesc: "Thomas Hall (WRC1) – Main academic building featuring classrooms and Student Life offices. Provides collaborative learning spaces and areas for student activities and engagement.", image: "WR Thomas Hall.jpg" },
+      { name: "Thomas Hall", lat: 32.618323, lng: -83.608787, desc: "Classrooms, Student Life", longDesc: "Thomas Hall (WRC1) – Main academic building featuring classrooms and Student Life offices. Provides collaborative learning spaces and areas for student activities and engagement.", image: "IMG/WR Thomas Hall.jpg" },
       { name: "Academic Services Building", lat: 32.61784, lng: -83.608701, desc: "Classrooms, labs, Walker Auditorium", longDesc: "Academic Services Building (WRC2) – Houses administrative and faculty offices, classrooms, and science labs. Includes the Walker Auditorium, a large space used for lectures, presentations, and campus events." },
       { name: "Oak Hall", lat: 32.615262, lng: -83.607937, desc: "Academic Resource Center", longDesc: "Oak Hall (WRC3) – Home to the Academic Resource Center, campus Bookstore, Library, and STEM Wing. Also, classrooms and faculty offices support science, technology, engineering, and math programs." }
     ]
@@ -513,7 +513,7 @@ function showCampus(campusId){
             data-desc="${(b.longDesc || b.desc || "").replace(/"/g,'&quot;')}"
             data-campus="${campus.name.replace(/"/g,'&quot;')}"
             data-image="${(b.image || "").replace(/"/g,'&quot;')}"
-          ><img src="infobutton.jpg" alt="Info" width="15" height="15" style="vertical-align:middle;"></button>
+          ><img src="IMG/infobutton.jpg" alt="Info" width="15" height="15" style="vertical-align:middle;"></button>
         </div>
       </div>`;
   });
